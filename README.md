@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pathviewr <a href='https://docs.ropensci.org/pathviewr'><img src='https://github.com/ropensci/pathviewr/raw/master/images/pathviewrhex_300dpi_trns.png' align="right" height="150px" /></a>
+# pathviewr
 
 <!-- badges: start -->
 
@@ -11,9 +11,12 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![R build
 status](https://github.com/ropensci/pathviewr/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/pathviewr/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/ropensci/pathviewr/graph/badge.svg)](https://codecov.io/gh/ropensci/pathviewr?branch=master)
+coverage](https://codecov.io/gh/ropensci/pathviewr/graph/badge.svg)](https://app.codecov.io/gh/ropensci/pathviewr?branch=master)
 [![](https://badges.ropensci.org/409_status.svg)](https://github.com/ropensci/software-review/issues/409)  
 [![DOI](https://zenodo.org/badge/268906628.svg)](https://zenodo.org/badge/latestdoi/268906628)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/pathviewr)](https://CRAN.R-project.org/package=pathviewr)
+
 <!-- badges: end -->
 
 `pathviewr` offers tools to import, clean, and visualize movement data,
@@ -28,10 +31,15 @@ subject position to estimate perception of visual stimuli.
 
 ## Installation
 
-This package can be installed via:
+You can install `pathviewr` from CRAN via:
 
 ``` r
-#install.packages("devtools") # if devtools is not installed
+install.packages("pathviewr")
+```
+
+Or to get the latest (developmental) version through GitHub, use:
+
+``` r
 devtools::install_github("ropensci/pathviewr")
 ```
 
@@ -141,7 +149,7 @@ str(motive_data)
 #>  - attr(*, ".internal.selfref")=<externalptr> 
 #>  - attr(*, "pathviewr_steps")= chr "viewr"
 #>  - attr(*, "file_id")= chr "pathviewr_motive_example_data.csv"
-#>  - attr(*, "file_mtime")= POSIXct[1:1], format: "2021-03-15 16:34:52"
+#>  - attr(*, "file_mtime")= POSIXct[1:1], format: "2022-08-19 14:30:37"
 #>  - attr(*, "frame_rate")= num 100
 #>  - attr(*, "header")='data.frame':   11 obs. of  2 variables:
 #>   ..$ metadata: chr [1:11] "Format Version" "Take Name" "Take Notes" "Capture Frame Rate" ...
@@ -184,7 +192,7 @@ str(motive_allinone)
 #>  $ end_length_sign  : num [1:449] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ...
 #>  $ direction        : chr [1:449] "leftwards" "leftwards" "leftwards" "leftwards" ...
 #>  - attr(*, "file_id")= chr "pathviewr_motive_example_data.csv"
-#>  - attr(*, "file_mtime")= POSIXct[1:1], format: "2021-03-15 16:34:52"
+#>  - attr(*, "file_mtime")= POSIXct[1:1], format: "2022-08-19 14:30:37"
 #>  - attr(*, "frame_rate")= num 100
 #>  - attr(*, "header")='data.frame':   11 obs. of  2 variables:
 #>   ..$ metadata: chr [1:11] "Format Version" "Take Name" "Take Notes" "Capture Frame Rate" ...
@@ -316,8 +324,8 @@ The preferred way to cite `pathviewr` (but subject to change) is:
 
 Baliga VB, Armstrong MS, Press ER (2021). *pathviewr: Tools to import,
 clean, and visualize animal movement data in R*. R package version
-1.0.0, <https://github.com/ropensci/pathviewr>. doi:
-10.5281/zenodo.4270187.
+1.1.3, <https://github.com/ropensci/pathviewr>. doi:
+10.5281/zenodo.4270187
 
 ## License
 

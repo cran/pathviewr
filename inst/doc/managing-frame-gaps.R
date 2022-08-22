@@ -21,7 +21,7 @@ motive_data <-
                 package = 'pathviewr')
   )
 
-## ----cleanup data-------------------------------------------------------------
+## ----cleanup_data-------------------------------------------------------------
 motive_cleaned <-
   motive_data %>%
   clean_viewr(

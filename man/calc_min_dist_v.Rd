@@ -27,14 +27,14 @@ Calculate minimum distance to lateral and end walls in a V-shaped
 experimental tunnel
 }
 \details{
-For tunnels in which \code{vertex_angle} is >90 degree, \code{bound_pos}
-and \code{bound_neg} represent a planes orthogonal to the lateral walls and
-are used to modify \code{min_dist_pos} and \code{min_dist_neg} calculations
-to prevent erroneous outputs.
+For tunnels in which \code{vertex_angle} is >90 degree,
+\code{bound_pos} and \code{bound_neg} represent a planes orthogonal to the
+lateral walls and are used to modify \code{min_dist_pos} and
+\code{min_dist_neg} calculations to prevent erroneous outputs.
 \code{calc_min_dist_v()} assumes the subject locomotes facing forward,
 therefore \code{min_dist_end} represents the minimum distance between the
-subject and the end wall to which it is moving towards
-All outputs are in meters.
+subject and the end wall to which it is moving towards All outputs are in
+meters.
 }
 \examples{
  ## Import sample data from package
@@ -76,6 +76,7 @@ Other mathematical functions:
 \code{\link{get_3d_angle}()},
 \code{\link{get_3d_cross_prod}()},
 \code{\link{get_dist_point_line}()},
+\code{\link{get_traj_velocities}()},
 \code{\link{get_velocity}()},
 \code{\link{rad_2_deg}()}
 }

@@ -32,9 +32,9 @@ A numeric vector that provides the angular measurement in degrees.
 Compute an angle in 3D space
 }
 \details{
-Everything supplied to arguments must be singular numeric values.
-The second point (x2, y2, z2) is treated as the vertex, and the angle between
-the three points in 3D space is computed.
+Everything supplied to arguments must be numeric values or vectors
+of numeric values. The second point (x2, y2, z2) is treated as the vertex,
+and the angle between the three points in 3D space is computed.
 }
 \examples{
 get_3d_angle(
@@ -50,6 +50,7 @@ Other mathematical functions:
 \code{\link{get_2d_angle}()},
 \code{\link{get_3d_cross_prod}()},
 \code{\link{get_dist_point_line}()},
+\code{\link{get_traj_velocities}()},
 \code{\link{get_velocity}()},
 \code{\link{rad_2_deg}()}
 }

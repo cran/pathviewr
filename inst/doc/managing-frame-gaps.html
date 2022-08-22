@@ -12,11 +12,23 @@
 
 <meta name="author" content="Melissa S. Armstrong" />
 
-<meta name="date" content="2021-05-04" />
+<meta name="date" content="2022-08-20" />
 
 <title>Managing frame gaps with pathviewr</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -26,6 +38,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -127,7 +140,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -141,13 +334,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Managing frame gaps with pathviewr</h1>
 <h4 class="author">Melissa S. Armstrong</h4>
-<h4 class="date">2021-05-04</h4>
+<h4 class="date">2022-08-20</h4>
 
 
 
 <div id="defining-trajectories-with-pathviewr" class="section level2">
 <h2>Defining trajectories with <code>pathviewr</code></h2>
-<p><code>pathviewr</code> defines trajectories as continuous movement from one side of a region of interest to the other. Before trajectories can be defined, the region of interest must be selected via <code>select_x_percent()</code> in addition to all the previous steps of the data import and cleaning pipeline as described in <a href="https://docs.ropensci.org/pathviewr/articles/data-import-cleaning.html">the Data Import and Cleaning vignette</a>. We’ll start with loading <code>pathviewr</code> and a few packages from the <code>tidyverse</code> and importing our data.</p>
+<p><code>pathviewr</code> defines trajectories as continuous movement
+from one side of a region of interest to the other. Before trajectories
+can be defined, the region of interest must be selected via
+<code>select_x_percent()</code> in addition to all the previous steps of
+the data import and cleaning pipeline as described in <a href="https://docs.ropensci.org/pathviewr/articles/data-import-cleaning.html">the
+Data Import and Cleaning vignette</a>. We’ll start with loading
+<code>pathviewr</code> and a few packages from the
+<code>tidyverse</code> and importing our data.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## If you do not already have pathviewr installed:</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;devtools&quot;)</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># devtools::install_github(&quot;ropensci/pathviewr&quot;)</span></span>
@@ -163,7 +363,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;pathviewr_motive_example_data.csv&quot;</span>,</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                <span class="at">package =</span> <span class="st">&#39;pathviewr&#39;</span>)</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p>We’ll quickly run through the cleanup pipeline using one of <code>pathviewr</code>’s all-in-one cleaning functions as described in <a href="https://docs.ropensci.org/pathviewr/articles/data-import-cleaning.html">the Data Import and Cleaning vignette</a>. Since trajectories are defined in the <code>separate_trajectories()</code> function, we’ll stop the all-in-one there by setting it and every step after it to <code>FALSE</code> so we can take a closer look at how trajectories are defined. Since all steps are set to <code>TRUE</code> by default, we don’t actually need to list them in the function, just those we want to switch to <code>FALSE</code> or those that require additional arguments.</p>
+<p>We’ll quickly run through the cleanup pipeline using one of
+<code>pathviewr</code>’s all-in-one cleaning functions as described in
+<a href="https://docs.ropensci.org/pathviewr/articles/data-import-cleaning.html">the
+Data Import and Cleaning vignette</a>. Since trajectories are defined in
+the <code>separate_trajectories()</code> function, we’ll stop the
+all-in-one there by setting it and every step after it to
+<code>FALSE</code> so we can take a closer look at how trajectories are
+defined. Since all steps are set to <code>TRUE</code> by default, we
+don’t actually need to list them in the function, just those we want to
+switch to <code>FALSE</code> or those that require additional
+arguments.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>motive_cleaned <span class="ot">&lt;-</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  motive_data <span class="sc">%&gt;%</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_viewr</span>(</span>
@@ -180,7 +390,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAbFBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6AGY6Ojo6kNtmAABmADpmOpBmZmZmkJBmtrZmtv+QOgCQOjqQkGaQtpCQ2/+2ZgC2tma225C2/7a2///bkDrb25Db/7bb////tmb/25D//7b//9v///8n0aLjAAAACXBIWXMAAA7DAAAOwwHHb6hkAAANS0lEQVR4nO2dC3ujthKGaRLvqd2bt+1yTpdunET//z8eJCFpRrcRQhhD5uuzqW2ELi+j0QgEdIKVVbd1BR5dDIgQAyLEgAgxIEIMiBADIsSACDEgQgyIEAMixIAIMSBCDIgQAyLEgAgxIEIMiBADIsSACDEgQgyIkAP08bVTevq+YXUeTw5Qz2RisoDeL+ct6/GwAoCuW9bjYWUBfXx92bIeDyvng95ObEIRaUDvl86KfTUSx0GEnJP+5Zv6/40tCCkANDAgpAlQ73wQh0NIgQWxsNhJE+JhnpCzoJvyPrefuKchBVON4fl1s8o8ooLJKsdBWMCC9PjeswUhQR8kTWhgH4QFhnk1lLH9eOI4iBADIsSACJlI+myDaR7mkdiCCDEgQiCS7viyRkTOgiYnxIEilt/F3i/spJEQIGlEbEFY8MIhD/ERASfNdGICXWw0IR7HAmEnPXQdX6DH4lGMEFhhxnOxmGAkzSN8RLG52MefTMqKARFiQIQYECEGRIgBEWJAhBgQIQZEiE/aE+LboQjx7VCE+HYoQnw7FCG+HYqQv8KM5QmeMONRLCKOgwg1BtTtRhWA5KXVpeeld2OQFYD0rQjDMld9YEBmIfmyWxEODKjNrQgHBsQWRCVkH0Ql5FFsUcJNsltPDIgQAyI0E1CzWxGOCuj+5W6tikBxybM75s8Bt1Y9oGXP7jgsoFbP7jgsoFbP7jgwoDuXu7UYECGOgwixBRFiQIQqAMmL88PSRy8cGVD//Pp2ehH9oivQBwYkz0nLq898TjqRUAKSS4R4qpFK2L+8X55f3y/cxRIJ1e0+SxfBHBnQfcvdWgyI0J0v+zzCCbN5Czl2eOHQbxXNPAABdyKyeOBLz+kjPV/CQXEfYyXUVNRLuNriBaKFkSbDLcL9KJI7EXnGCD2ABUVaLuznsqYiTGAnaCmFFrkcUEsfFG2liHCpBOR+EjhpuafedPECaqDXBBKQiG1JAIIFFFjSUkAFIm946RSfRGUjxzjdrBBznFCpVBdfG9BgrgndUheHNKBkBee3azYEz2rdNkyoBhD5qFLjx0XalVtAgT+Ot8j0j2lP/1+KgsA/xD62B6QftZ172C243yUVDEzNio+05g/8VykU/hTtINwudYA+vurWZx6XXGhB+PDqAwcB5QK6Dm5JJsj24hwyYV3ROosXbAyQ9UGmk9mfEoD8Fkc9R7KtM5LACMr0tHoLygaK5uJZMk101hMASjYrMK04SiJNkpNwrqgqUFQP3G4/WTUmg3zQVtKVqJuLuVzqp2PxUwurtDLymdxrOjxVgOYpdWrf+aBVCdXJOsfu7mcUYSXS4/zM5oC/sS21uYo6QGp0H7qlT8GbphrzJgPxqVk8j9K4JyxBjxW1gFR8KEPFhS/y64QL9mdbEgYlAI8mnXQaw0TNKKauhulLPtn3apRMVkFb57WrnatSNYEZ4k+u3cWAepR/cpVi0WQVWA7ZZDENLRZs0NIshs6ZLGQjJkDBb0G7iwGpxy7oydjyqQagk2qfSwMAwY+WdDKnYgcHMgK45vqg/um77mFJ2xDFk9US3yP8rwGg1G52ruLF0mZT1NUbL+0QzR/F9PxhyK0CLp2sljGKtF54M7UoCeDLY4YXJHIZuWzWO2FWNlmdGMWGMtyGxKAtEt+sOQjcETEgkzWAjDvrioHijMlqZ+ZgZtyYqMFKAh+UMjiB/486UggongfMS9QBavYKP3C6o+usFaEUndsaNs/vC7nmYq+THze9XCtn8w1e4Tc5QNyQeEprDtYt+84mn0eGnc/G77KiBlCbV/iZUbXdBBVllizWJfb2Bq7IkkLtLmmRUrtLz8Exs/MF2B1855MMdNzQZloboYOHcQvEDAcgpvLbXQyozSv8MCBh/+tQK+Cok4p7bP/zoXn2hOGKSCmOb6zdxYDavMLP+SAwZJQBQl424BK6qDhU80Eguwk7Z80w3+IVfngUA7UtAuRPMnxubrTKyRYQ2k203SUtWipQO/MVHU3CB1k2sIsI3GbXdAoN+mVxu9sAwtkZ89efS+XHBsZ9BH2pPM9M8yq72PNrv+xpiqplBQeQzCc9upXCsd04WdHiFmmNIeIgF5IvvmfV8xu1OcUbPZNSQ0BymJdB4vJbESAdU88ZOSATQI4qw0fAXdYBJANFCahBoBg/6NndUJvwgObFNCEZDwv42tQHGQtqECgGdLwgJmyoczo2foGhgBfTxPB3cROj210MaPJBLS4926qKsPJw0o6oBEiMzaQ7ll92KRzc7pIWaalAsckDlsKjC21F2JZDKpHwMRzjBYC6TJvGQXZSGQOEwISAgGOO7VliHHMq2jDh7OyC5oUtRlSmiUGUaRBFtqxoacImj2yH5UbsJwssStAZjUXYRBWAmjyyPeo4AxOgmOCzAM2tJ1ZROmGbR7bHygWNROc+7HwbEhTYbrC9NahgrqL5hG0e2R4vN9rYGC3hAwJ21FY1gWKLR7bnynVNhs1PAPJ6WXPVBIotHtlOlRtxOMZHBaxau51ZFQ0TLnr6S40TjbLCP66oB4iD5ux1DyRekc0TbpLdeqoAZPoYP5oikbAfp/IvDdYo7kN1geJNnlHMnQ+S0ba8MTE55z80oKt4+8939S8lxefLt0xUeWBA8oyivOMnA0jNRvQDmKgVZg+vCh8kz9b351wXk3YzXcLPrlHcg2qG+dE2xpEsN4hJ6xk+rQUVSL6MXplQcpnVJwckJ2xKyXntoQG1uvS8C1Vf9mlw6XkXWvvSc/6Guh1oy0vPu9CWl553oTtfer7PSa6WWunSc9HTX3ahdeKgsqe/7EKrAJpxO9TDaxVApTfU7UEzAZXd7cMWRGnWDXWPrZUmqzVPf3lMVZ0PknH0sjfXHBqQDqELHrgNXFF9uVurfnUHPRf7pIDso0oZUCKhHqLeTqQT+qyAih9V+mkBNSl3N1oC6OPPFu9iqyh4cdI7LUVjQESWDIjIkgERWTIgIksGRGTJgIgsGRCRJQNaN8tjqfHqjuOp8eqO46lydcfnUePVHcdT49Udx1Ob1R0H1rzVHZ9QHAcRYkCEwCjW4qbe4wlcWWUPFBPqYmodPRsSku+DPr6uHSjegKHq1SKJQwIT4i/VWVbo7hYk74Ox98Kou/NKEqIv1VnWCETSd/FB+rJsPx2FzLwGJcR71WZZpXuPYvqmYTMjHtJlooR4r9osq3TvOEj3AHOY+5+71Gs8UEK8V22WVbo3IO0rJo/xfpEz4/g5OpQQfanOskpmlet50bM7yhVpatwwKgHlsqzStl1M/xR9lkFtF8tkWSXnpAteArlM8uVc54i7jQ/MtU46k2WVAkArn3JFY7JuWvyQVA7zuSyrNAECr4da+aQ9iupUqxIetTJQzGVZo8CCVteg49HpbWZd+p14KOGQi2KLs6wQnw8iVLGI83MJnLRX3odP2nsKF5LzZR+kilsRPpfYggixDyLEoxghjoMIMSBCDlCTB00eT2AU4+ErpiAOYmEFcRALy/mg1lfcDiIA6MROOiLQxXjVQkzspAmxkybETpoQ6GJ3ubK6O/FcjBADIsSACDEgQgyI0C4Avf+63ZmYhoBu17JwfE7MrtYk9NSSCpUjWXx+a2r3doCK2z0XUP/0z6//kiui6FyzKeTGnQJ6O13HLkbe5/dIgN5Of1zUYjG9zuSmeoD89vzjcp1WMI1Hfgh6xqDWqat62I3TapX3i8zzKsAWuajlLwNIFvvl79O06TalUadoVMtM8W6jyxECGvyNvSrlb73776dg6UwdINX8cU4il6PdVA1fzDGYFuk8vw5jIvxENPmLWi56FXajelWH+l3mOf3TW1TeP317vzz/0IBOY0nqPXqmSHUwxi/m8GtfZOsz5QYBmdztRlfKNdyjHtDZ/rnqswA3U8RVQVMY1O9gZmfuOB8T2Y1q2ZZsp/pFGovZoi2xVw3S90do2sPzqy3S5A4Bgfqc8WpOVO600Zaidz+H6z/rAF3dH52hapqrpay8OhKwOPN5TIA23qZegrfoxuuvciJ9FrbzgiI1IVg0qg9yKzB3W5wpxRqg74gaAVJHZypi7DVjD5teUQK6tDmfIutlN44+4el/JwDIbBkgoNFJjzb15RsEpM3F+CAP0FSfAJDJ3Wwc7gUIWNBowf9oI4rtJsCRhFlhCxKmc1pAIx0PkMmud60rtKCJ7p0sKPBB45/flBvyx0zkg8xzl2UFb6CL2S3T6mfVV0dAiota7gt8EMwu4oNCQPar2WhLWQ8QGDXOU+698qlqOOihHclfxkHOjCZyozae7uwqZ3eTH+wo9kONWeoXMFApRjfnYb1RLARkc7cb3Sh2XguQDUp6F4ioMobg9KQXB8mNagUvrLHbbYqDtKN5kYXZMMUUedMLdrTrC+KgCCCTu9s4xkFP/5WvVpt2bwHo7poCxXY3YHjKLTvcBSCtNQCpPLOPBFodkLlgu3ztWh0govwbDkVC7ciCthEDIsSACDEgQgyIEAMixIAIMSBCDIgQAyLEgAgxIEIMiBADIsSACDEgQgyIEAMixIAIMSBCDIjQ/wE0gv9WBzvutQAAAABJRU5ErkJggg==" /><!-- --></p>
 <div id="inspecting-the-data" class="section level3">
 <h3>Inspecting the data</h3>
-<p>We’ve cleaned up our data and are ready to link individual data points into continuous trajectories. Deciding exactly how to define a trajectory will depend largely on the quality of data collected and the resolution required to answer a given question about the data. If the data are fairly continuous and high resolution is required, the default <code>max_frame_gap = 1</code> will not allow any frame gaps–movement must be continuous.</p>
+<p>We’ve cleaned up our data and are ready to link individual data
+points into continuous trajectories. Deciding exactly how to define a
+trajectory will depend largely on the quality of data collected and the
+resolution required to answer a given question about the data. If the
+data are fairly continuous and high resolution is required, the default
+<code>max_frame_gap = 1</code> will not allow any frame gaps–movement
+must be continuous.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>motive_mfg1 <span class="ot">&lt;-</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  motive_cleaned <span class="sc">%&gt;%</span> </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_trajectories</span>(</span>
@@ -196,7 +412,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">## How many trajectories do we end up with?</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(motive_mfg1<span class="sc">$</span>file_sub_traj))</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 16</span></span></code></pre></div>
-<p>Plotting each trajectory reveals that perhaps some trajectories that should be continuous have been split into two or more separate trajectories because of a dropped frame or two. This data may require relaxing the stringent no-frame-gaps requirement in order to link data points that should go together into a single trajectory. Let’s try setting <code>max_frame_gap = 5</code>.</p>
+<p>Plotting each trajectory reveals that perhaps some trajectories that
+should be continuous have been split into two or more separate
+trajectories because of a dropped frame or two. This data may require
+relaxing the stringent no-frame-gaps requirement in order to link data
+points that should go together into a single trajectory. Let’s try
+setting <code>max_frame_gap = 5</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>motive_mfg5 <span class="ot">&lt;-</span> </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  motive_cleaned <span class="sc">%&gt;%</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_trajectories</span>(</span>
@@ -212,7 +433,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">## How many trajectories do we end up with?</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(motive_mfg5<span class="sc">$</span>file_sub_traj))</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 13</span></span></code></pre></div>
-<p>By increasing the allowable frame gap, more chunks of data have been linked into trajectories and so our trajectory count has dropped from 335 to 224. Because it is hard to see all the trajectories piled up on top of each other, let’s go ahead and run this through <code>get_full_trajectories()</code> to clean out bits of data that do not span our region of interest. To inspect each trajectory individually, we can then use the <code>plot_viewr_trajectories()</code> function to take a closer look at the quality of each trajectory. This can be computationally expensive depending on your data set.</p>
+<p>By increasing the allowable frame gap, more chunks of data have been
+linked into trajectories and so our trajectory count has dropped from
+335 to 224. Because it is hard to see all the trajectories piled up on
+top of each other, let’s go ahead and run this through
+<code>get_full_trajectories()</code> to clean out bits of data that do
+not span our region of interest. To inspect each trajectory
+individually, we can then use the <code>plot_viewr_trajectories()</code>
+function to take a closer look at the quality of each trajectory. This
+can be computationally expensive depending on your data set.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>motive_mfg5_full <span class="ot">&lt;-</span> </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  motive_mfg5 <span class="sc">%&gt;%</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_full_trajectories</span>(</span>
@@ -237,14 +466,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="visualize-frame-gap-choice" class="section level3">
 <h3>Visualize frame gap choice</h3>
-<p><code>pathviewr</code> has several tools to help users decide what frame gap allowances may be appropriate depending on their data and resolution needs. <code>visualize_frame_gap_choice()</code> runs the <code>separate_trajectories()</code> function over the same data set as many times as the user would like via the <code>loop</code> argument, each time with a different <code>max_frame_gap</code> allowance. Each loop represents an increase in the max frame gap value of 1. For example the default of <code>loops = 20</code> will run <code>separate_trajectories()</code> over the data set 20 times, with an increase in the <code>max_frame_gap</code> argument of 1 each time.</p>
+<p><code>pathviewr</code> has several tools to help users decide what
+frame gap allowances may be appropriate depending on their data and
+resolution needs. <code>visualize_frame_gap_choice()</code> runs the
+<code>separate_trajectories()</code> function over the same data set as
+many times as the user would like via the <code>loop</code> argument,
+each time with a different <code>max_frame_gap</code> allowance. Each
+loop represents an increase in the max frame gap value of 1. For example
+the default of <code>loops = 20</code> will run
+<code>separate_trajectories()</code> over the data set 20 times, with an
+increase in the <code>max_frame_gap</code> argument of 1 each time.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>motive_cleaned <span class="sc">%&gt;%</span> </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">visualize_frame_gap_choice</span>(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">loops =</span> <span class="dv">20</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
 <pre><code>#&gt; [[1]]
-#&gt; # A tibble: 20 x 3
+#&gt; # A tibble: 20 × 3
 #&gt;    frame_gap_allowed trajectory_count file_id
 #&gt;                &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt;  
 #&gt;  1                 1               14 .      
@@ -270,13 +508,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt; 
 #&gt; [[2]]
 #&gt; NULL</code></pre>
-<p>The output of <code>visualize_frame_gap_choice()</code> is a tibble and plot of the number of trajectories after running <code>separate_trajectories()</code> with <code>max_frame_gap = 1</code>, <code>max_frame_gap = 2</code>, <code>max_frame_gap = 3</code>, etc. We can see that as the frame gap allowance increases, more bits of data are being linked into continuous trajectories and thus the total number of trajectories decreases. The vertical line on the plot indicates the “elbow” of the plot or the point at which counts of trajectories appear to stabilize and increases in the <code>max_frame_gap</code> allowance no longer effect the trajectory count very much.</p>
+<p>The output of <code>visualize_frame_gap_choice()</code> is a tibble
+and plot of the number of trajectories after running
+<code>separate_trajectories()</code> with
+<code>max_frame_gap = 1</code>, <code>max_frame_gap = 2</code>,
+<code>max_frame_gap = 3</code>, etc. We can see that as the frame gap
+allowance increases, more bits of data are being linked into continuous
+trajectories and thus the total number of trajectories decreases. The
+vertical line on the plot indicates the “elbow” of the plot or the point
+at which counts of trajectories appear to stabilize and increases in the
+<code>max_frame_gap</code> allowance no longer effect the trajectory
+count very much.</p>
 </div>
 <div id="autodetect" class="section level3">
 <h3>Autodetect</h3>
-<p>Setting <code>max_frame_gap = &quot;autodetect&quot;</code> rather than a numeric value uses the “elbow” of the plots from <code>visualize_frame_gap_choice()</code> to guesstimate the best value(s) for <code>max_frame_gap</code>.</p>
-<p><strong>In addition to automatically selecting the <code>max_frame_gap</code> depending on the data, <code>autodetect</code> does so on a per subject basis rather than applying the same allowable frame gap to all data in the data set since frame gaps can vary between subjects.</strong></p>
-<p>The cap on how high the <code>max_frame_gap</code> can go is defined as a proportion of the capture frame rate and set by the <code>frame_rate_proportion</code> argument, which defaults to <code>.10</code>.</p>
+<p>Setting <code>max_frame_gap = &quot;autodetect&quot;</code> rather than a
+numeric value uses the “elbow” of the plots from
+<code>visualize_frame_gap_choice()</code> to guesstimate the best
+value(s) for <code>max_frame_gap</code>.</p>
+<p><strong>In addition to automatically selecting the
+<code>max_frame_gap</code> depending on the data,
+<code>autodetect</code> does so on a per subject basis rather than
+applying the same allowable frame gap to all data in the data set since
+frame gaps can vary between subjects.</strong></p>
+<p>The cap on how high the <code>max_frame_gap</code> can go is defined
+as a proportion of the capture frame rate and set by the
+<code>frame_rate_proportion</code> argument, which defaults to
+<code>.10</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>motive_auto <span class="ot">&lt;-</span> </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  motive_cleaned <span class="sc">%&gt;%</span> </span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_trajectories</span>(</span>
@@ -295,7 +553,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="do">## How many trajectories do we end up with?</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(motive_auto<span class="sc">$</span>file_sub_traj))</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 13</span></span></code></pre></div>
-<p>Our sample data has 3 subjects so with <code>frame_gap_messaging = TRUE</code>, the <code>max_frame_gap</code> for each subject will be reported (the default is <code>FALSE</code>). <code>frame_gap_plotting = TRUE</code> will display the elbow plots for each subject, but also defaults to <code>FALSE</code>.</p>
+<p>Our sample data has 3 subjects so with
+<code>frame_gap_messaging = TRUE</code>, the <code>max_frame_gap</code>
+for each subject will be reported (the default is <code>FALSE</code>).
+<code>frame_gap_plotting = TRUE</code> will display the elbow plots for
+each subject, but also defaults to <code>FALSE</code>.</p>
 </div>
 </div>
 

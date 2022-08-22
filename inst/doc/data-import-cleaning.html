@@ -12,11 +12,23 @@
 
 <meta name="author" content="Vikram B. Baliga" />
 
-<meta name="date" content="2021-05-04" />
+<meta name="date" content="2022-08-20" />
 
 <title>Basics of data import and cleaning in pathviewr</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -26,6 +38,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -127,7 +140,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -139,33 +332,67 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<h1 class="title toc-ignore">Basics of data import and cleaning in pathviewr</h1>
+<h1 class="title toc-ignore">Basics of data import and cleaning in
+pathviewr</h1>
 <h4 class="author">Vikram B. Baliga</h4>
-<h4 class="date">2021-05-04</h4>
+<h4 class="date">2022-08-20</h4>
 
 
 
 <div id="overview" class="section level2">
 <h2>Overview</h2>
-<p>Raw movement data, including those from motion capture systems, may have a variety of issues. These raw data often contain noise or artifacts from the recording session, which may not be easily removed via the recording software itself. Data may not be organized as “tidy” key-value pairs (making plotting more difficult), the axes and overall orientation of the environment may not conform to a standard, and individual movement trajectories may be ill-defined.</p>
-<p><code>pathviewr</code> provides functions in R to deal with such problems (i.e. “cleaning”). This vignette will cover the basics of how to import raw data and how to clean data to prepare it for visualization and/or statistical analyses.</p>
+<p>Raw movement data, including those from motion capture systems, may
+have a variety of issues. These raw data often contain noise or
+artifacts from the recording session, which may not be easily removed
+via the recording software itself. Data may not be organized as “tidy”
+key-value pairs (making plotting more difficult), the axes and overall
+orientation of the environment may not conform to a standard, and
+individual movement trajectories may be ill-defined.</p>
+<p><code>pathviewr</code> provides functions in R to deal with such
+problems (i.e. “cleaning”). This vignette will cover the basics of how
+to import raw data and how to clean data to prepare it for visualization
+and/or statistical analyses.</p>
 </div>
 <div id="what-do-movement-data-sets-look-like" class="section level2">
 <h2>What do movement data sets look like?</h2>
-<p>At minimum, movement data provide information on a subject or object’s position over time. These data are typically supplied in three dimensions (e.g. x, y, z), with position in each dimension sampled at a particular rate (e.g. 100 Hz). Different recording software may provide additional features, such as the ability to track multiple subjects simultaneously, information on subjects’ rotation, tracking of “rigid body” elements, or even the ability to apply Kalman filters.</p>
-<p>A central goal of <code>pathviewr</code> is to take data from different sources (so far: Motive and Flydra), re-organize them into a common format that can be wrangled in R, clean them up a bit, and get them ready for visualization and/or statistical analyses. We’ll first cover what’s included in Motive and in Flydra data and how <code>pathviewr</code> handles these. Should you have data from another source, our <code>as_viewr()</code> function will allow you to bring it into the <code>pathviewr</code> framework.</p>
+<p>At minimum, movement data provide information on a subject or
+object’s position over time. These data are typically supplied in three
+dimensions (e.g. x, y, z), with position in each dimension sampled at a
+particular rate (e.g. 100 Hz). Different recording software may provide
+additional features, such as the ability to track multiple subjects
+simultaneously, information on subjects’ rotation, tracking of “rigid
+body” elements, or even the ability to apply Kalman filters.</p>
+<p>A central goal of <code>pathviewr</code> is to take data from
+different sources (so far: Motive and Flydra), re-organize them into a
+common format that can be wrangled in R, clean them up a bit, and get
+them ready for visualization and/or statistical analyses. We’ll first
+cover what’s included in Motive and in Flydra data and how
+<code>pathviewr</code> handles these. Should you have data from another
+source, our <code>as_viewr()</code> function will allow you to bring it
+into the <code>pathviewr</code> framework.</p>
 </div>
 <div id="data-import-via-pathviewr" class="section level2">
 <h2>Data import via <code>pathviewr</code></h2>
 <p>Data can be imported via one of three functions:</p>
 <ul>
-<li><p><code>read_motive_csv()</code> imports data from <code>.csv</code> files that have been exported from Optitrack’s <a href="https://optitrack.com/software/motive/">Motive</a> software</p></li>
-<li><p><code>read_flydra_mat()</code> imports data from <code>.mat</code> files that have been exported from <a href="https://github.com/strawlab/flydra">Flydra</a></p></li>
-<li><p><code>as_viewr()</code> can be used to handle data from other sources</p></li>
+<li><p><code>read_motive_csv()</code> imports data from
+<code>.csv</code> files that have been exported from Optitrack’s <a href="https://optitrack.com/software/motive/">Motive</a>
+software</p></li>
+<li><p><code>read_flydra_mat()</code> imports data from
+<code>.mat</code> files that have been exported from <a href="https://github.com/strawlab/flydra">Flydra</a></p></li>
+<li><p><code>as_viewr()</code> can be used to handle data from other
+sources</p></li>
 </ul>
-<p>We will showcase examples from each of these methods in this section.</p>
-<p>Please feel free to reach out to the <code>pathviewr</code> authors via <a href="https://github.com/ropensci/pathviewr/issues/">our Github Issues page</a> should you have trouble with any of our data import options. We are happy to work with you to design custom <code>read_</code> functions for file types we have not encountered ourselves.</p>
-<p>We’ll start by loading <code>pathviewr</code> and a few of the packages in the <code>tidyverse</code>.</p>
+<p>We will showcase examples from each of these methods in this
+section.</p>
+<p>Please feel free to reach out to the <code>pathviewr</code> authors
+via <a href="https://github.com/ropensci/pathviewr/issues/">our Github
+Issues page</a> should you have trouble with any of our data import
+options. We are happy to work with you to design custom
+<code>read_</code> functions for file types we have not encountered
+ourselves.</p>
+<p>We’ll start by loading <code>pathviewr</code> and a few of the
+packages in the <code>tidyverse</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## If you do not already have pathviewr installed:</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;devtools&quot;)</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># devtools::install_github(&quot;ropensci/pathviewr&quot;)</span></span>
@@ -175,7 +402,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span></code></pre></div>
 <div id="motive-csv-files" class="section level3">
 <h3>Motive CSV files</h3>
-<p><code>.csv</code> files exported from Motive can be imported via <code>read_motive_csv()</code></p>
+<p><code>.csv</code> files exported from Motive can be imported via
+<code>read_motive_csv()</code></p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Import the Motive example data included in </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="do">## the package</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -187,7 +415,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="do">## This produces a tibble </span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>motive_data</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 934 x 26</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 934 × 26</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    frame time_sec device02_rotation_x device02_rotation_y device02_rotation_z</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt;    &lt;dbl&gt;               &lt;dbl&gt;               &lt;dbl&gt;               &lt;dbl&gt;</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 72210     722.              0.135               -0.977             -0.112 </span></span>
@@ -200,19 +428,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 72217     722.              0.164               -0.972             -0.149 </span></span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 72218     722.              0.120               -0.973             -0.149 </span></span>
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 72219     722.              0.155               -0.970             -0.120 </span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ... with 924 more rows, and 21 more variables: device02_rotation_w &lt;dbl&gt;,</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 924 more rows, and 21 more variables: device02_rotation_w &lt;dbl&gt;,</span></span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device02_position_x &lt;dbl&gt;, device02_position_y &lt;dbl&gt;,</span></span>
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device02_position_z &lt;dbl&gt;, device02_mean_marker_error &lt;dbl&gt;,</span></span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device03_rotation_x &lt;dbl&gt;, device03_rotation_y &lt;dbl&gt;,</span></span>
 <span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device03_rotation_z &lt;dbl&gt;, device03_rotation_w &lt;dbl&gt;,</span></span>
 <span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device03_position_x &lt;dbl&gt;, device03_position_y &lt;dbl&gt;,</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device03_position_z &lt;dbl&gt;, device03_mean_marker_error &lt;dbl&gt;,</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device05_rotation_x &lt;dbl&gt;, device05_rotation_y &lt;dbl&gt;,</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device05_rotation_z &lt;dbl&gt;, device05_rotation_w &lt;dbl&gt;,</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device05_position_x &lt;dbl&gt;, device05_position_y &lt;dbl&gt;,</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device05_position_z &lt;dbl&gt;, device05_mean_marker_error &lt;dbl&gt;</span></span></code></pre></div>
-<p>A key thing to note is that these data, as stored in Motive CSVs, are not “tidy”. Each frame occupies one row, but what that also means is that the rotation and position values for the various subjects take up 24 columns! This format not only makes plotting data more difficult in base R, <code>ggplot2</code>, and <code>rgl</code>, but also makes other aspects of data wrangling more difficult. In a later step, we will ‘gather’ these data into key-value pairs so that e.g. all length-wise position values are in one column, all width-wise are in another…etc.</p>
-<p>Metadata are stored as attributes. We won’t go through all of these, but here are a couple important ones.</p>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   device03_position_z &lt;dbl&gt;, device03_mean_marker_error &lt;dbl&gt;, …</span></span></code></pre></div>
+<p>A key thing to note is that these data, as stored in Motive CSVs, are
+not “tidy”. Each frame occupies one row, but what that also means is
+that the rotation and position values for the various subjects take up
+24 columns! This format not only makes plotting data more difficult in
+base R, <code>ggplot2</code>, and <code>rgl</code>, but also makes other
+aspects of data wrangling more difficult. In a later step, we will
+‘gather’ these data into key-value pairs so that e.g. all length-wise
+position values are in one column, all width-wise are in
+another…etc.</p>
+<p>Metadata are stored as attributes. We won’t go through all of these,
+but here are a couple important ones.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## E.g. to see the header of the original file:</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(motive_data, <span class="st">&quot;header&quot;</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 metadata                      value</span></span>
@@ -239,12 +472,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="do">## Frame rate</span></span>
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(motive_data, <span class="st">&quot;frame_rate&quot;</span>)</span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 100</span></span></code></pre></div>
-<p>Storing such metatdata in the attributes is a key feature of <code>pathviewr</code>. These metadata may not be as immediately as important as the time series of position or rotation, but they can provide important experimental information such as the date &amp; time of capture and the units of the position data (here, meters).</p>
+<p>Storing such metatdata in the attributes is a key feature of
+<code>pathviewr</code>. These metadata may not be as immediately as
+important as the time series of position or rotation, but they can
+provide important experimental information such as the date &amp; time
+of capture and the units of the position data (here, meters).</p>
 </div>
 <div id="flydra-matlab-files" class="section level3">
 <h3>Flydra Matlab files</h3>
-<p><code>.mat</code> files exported from Flydra can be imported via <code>read_flydra_mat()</code>.</p>
-<p>Note that you must supply a <code>subject_name</code> for Flydra data, as subject names are not embedded in the <code>.mat</code> files. Only one name can be added and it will be used throughout the resultant <code>tibble</code>.</p>
+<p><code>.mat</code> files exported from Flydra can be imported via
+<code>read_flydra_mat()</code>.</p>
+<p>Note that you must supply a <code>subject_name</code> for Flydra
+data, as subject names are not embedded in the <code>.mat</code> files.
+Only one name can be added and it will be used throughout the resultant
+<code>tibble</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Import the Flydra example data included in </span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">## the package</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>flydra_data <span class="ot">&lt;-</span></span>
@@ -258,7 +499,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Similarly, this produces a tibble with important </span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="do">## metadata as attributes</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>flydra_data</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7,744 x 6</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7,744 × 10</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    frame time_sec subject        position_length position_width position_height</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;                    &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;</span></span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1   746     0    birdie_wooster           0.869       -0.00417            1.31</span></span>
@@ -271,15 +512,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8   753     0.07 birdie_wooster           0.864       -0.00712            1.31</span></span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9   754     0.08 birdie_wooster           0.865       -0.00727            1.31</span></span>
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10   755     0.09 birdie_wooster           0.865       -0.00760            1.31</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ... with 7,734 more rows</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(flydra_data, <span class="st">&quot;frame_rate&quot;</span>)</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 100</span></span></code></pre></div>
-<p>Note that unlike the example Motive data, the Flydra data are already organized into key-value pairs. Because rotation is not captured by Flydra, such data are also not included.</p>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 7,734 more rows, and 4 more variables: velocity &lt;dbl&gt;,</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   length_inst_vel &lt;dbl&gt;, width_inst_vel &lt;dbl&gt;, height_inst_vel &lt;dbl&gt;</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(flydra_data, <span class="st">&quot;frame_rate&quot;</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 100</span></span></code></pre></div>
+<p>Note that unlike the example Motive data, the Flydra data are already
+organized into key-value pairs. Because rotation is not captured by
+Flydra, such data are also not included.</p>
 </div>
 <div id="data-from-other-sources" class="section level3">
 <h3>Data from other sources</h3>
-<p>Data from another format can be converted to a <code>viewr</code> object via <code>pathviewr::as_viewr()</code>. Although this function does not handle data import per se, it allows data that you may already have imported into R as a <code>tibble</code> or <code>data.frame</code> to then be reformatted for use with <code>pathviewr</code> functions.</p>
+<p>Data from another format can be converted to a <code>viewr</code>
+object via <code>pathviewr::as_viewr()</code>. Although this function
+does not handle data import per se, it allows data that you may already
+have imported into R as a <code>tibble</code> or <code>data.frame</code>
+to then be reformatted for use with <code>pathviewr</code>
+functions.</p>
 <p>We’ll run through a quick example with simulated data:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Create a dummy data frame with simulated (nonsense) data</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span></span>
@@ -308,7 +557,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="do">## Some metadata are stored as attributes</span></span>
 <span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(test, <span class="st">&quot;frame_rate&quot;</span>)</span>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 100</span></span></code></pre></div>
-<p>We also welcome you to request custom data import functions, especially if <code>as_viewr()</code> does not fit your needs. We are interested in expanding our data import functions to accommodate additional file types. Please feel free to <a href="https://github.com/ropensci/pathviewr/issues/new/choose">file a request for additional import functions</a> via our Github Issues page.</p>
+<p>We also welcome you to request custom data import functions,
+especially if <code>as_viewr()</code> does not fit your needs. We are
+interested in expanding our data import functions to accommodate
+additional file types. Please feel free to <a href="https://github.com/ropensci/pathviewr/issues/new/choose">file a
+request for additional import functions</a> via our Github Issues
+page.</p>
 </div>
 </div>
 <div id="data-cleaning" class="section level2">
@@ -316,16 +570,32 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>As noted above, raw data often suffer the following:<br />
 - contain noise or artifacts from the recording session<br />
 - not organized as “tidy” key-value pairs<br />
-- axes and overall orientation of the environment may not conform to a standard<br />
+- axes and overall orientation of the environment may not conform to a
+standard<br />
 - individual movement trajectories may be ill-defined</p>
-<p>Several functions to clean and wrangle data are available, and we have a suggested pipeline for how these steps should be handled. The rest of this vignette will cover these steps.</p>
-<p>All of the steps in the suggested pipeline are also covered by two all-in-one functions: <code>clean_viewr()</code> and <code>import_and_clean_viewr()</code>. See the section at the very end of this vignette for details.</p>
-<p>And speaking of pipes, all functions in <code>pathviewr</code> are pipe-friendly. We will detail each step separately, but each of the subsequent steps may be piped, e.g. <code>data %&gt;% relabel_viewr_axes() %&gt;% gather_tunnel_data()</code> etc etc</p>
+<p>Several functions to clean and wrangle data are available, and we
+have a suggested pipeline for how these steps should be handled. The
+rest of this vignette will cover these steps.</p>
+<p>All of the steps in the suggested pipeline are also covered by two
+all-in-one functions: <code>clean_viewr()</code> and
+<code>import_and_clean_viewr()</code>. See the section at the very end
+of this vignette for details.</p>
+<p>And speaking of pipes, all functions in <code>pathviewr</code> are
+pipe-friendly. We will detail each step separately, but each of the
+subsequent steps may be piped, e.g.
+<code>data %&gt;% relabel_viewr_axes() %&gt;% gather_tunnel_data()</code>
+etc etc</p>
 <div id="relabeling-axes-gathering-data-columns-and-trimming-outliers" class="section level3">
 <h3>Relabeling axes, gathering data columns, and trimming outliers</h3>
-<p>Axis labels (x, y, z) may be applied in arbitrary ways by software. A user might intuitively think the z axis represents height, but the original software may label it as the y axis instead.</p>
-<p><code>relabel_viewr_axes</code> provides a means to relabel axes with “tunnel_length”, “tunnel_width”, and “tunnel_height”. <strong>These axis labels will be expected by subsequent functions, so skipping this step is ill-advised.</strong></p>
-<p>Typically, axes from Motive data will need to be relabled, but axes in data imported from Flydra will not.</p>
+<p>Axis labels (x, y, z) may be applied in arbitrary ways by software. A
+user might intuitively think the z axis represents height, but the
+original software may label it as the y axis instead.</p>
+<p><code>relabel_viewr_axes</code> provides a means to relabel axes with
+“tunnel_length”, “tunnel_width”, and “tunnel_height”. <strong>These axis
+labels will be expected by subsequent functions, so skipping this step
+is ill-advised.</strong></p>
+<p>Typically, axes from Motive data will need to be relabled, but axes
+in data imported from Flydra will not.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>motive_relabeled <span class="ot">&lt;-</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  motive_data <span class="sc">%&gt;%</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relabel_viewr_axes</span>(</span>
@@ -349,8 +619,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21] &quot;device05_rotation_length&quot;   &quot;device05_rotation_real&quot;    </span></span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [23] &quot;device05_position_width&quot;    &quot;device05_position_height&quot;  </span></span>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [25] &quot;device05_position_length&quot;   &quot;device05_mean_marker_error&quot;</span></span></code></pre></div>
-<p>Akin to the behavior of <code>dplyr::gather()</code>, <code>gather_tunnel_data()</code> will take all data from a given session and organize it so that all data of a given type are within one column, i.e. all position lengths are in <code>position_length</code>, as opposed to separate length columns for each rigid body. <strong>These column names will be expected by subsequent functions, so skipping this step is also ill-advised if you are using data from Motive.</strong> Should you have data from Flydra, this step should be skipable.</p>
-<p>Use <code>trim_tunnel_outliers()</code> to remove extreme artifacts and other outlier data. What this function does is create a (virtual) boundary box according to user-specification, and any data outside that boundary are removed. For example, if you know your arena measures 10m x 10m x 10m and your data were calibrated to range from 0-10m in each dimension, you can be reasonably sure that extreme values such as 45m on a given axis are bogus. This step is entirely optional, and should only be used when the user is confident that data outside certain ranges are artifacts or other bugs. Data outside these ranges are then filtered out. Best to plot data beforehand and check!!</p>
+<p>Akin to the behavior of <code>dplyr::gather()</code>,
+<code>gather_tunnel_data()</code> will take all data from a given
+session and organize it so that all data of a given type are within one
+column, i.e. all position lengths are in <code>position_length</code>,
+as opposed to separate length columns for each rigid body. <strong>These
+column names will be expected by subsequent functions, so skipping this
+step is also ill-advised if you are using data from Motive.</strong>
+Should you have data from Flydra, this step should be skipable.</p>
+<p>Use <code>trim_tunnel_outliers()</code> to remove extreme artifacts
+and other outlier data. What this function does is create a (virtual)
+boundary box according to user-specification, and any data outside that
+boundary are removed. For example, if you know your arena measures 10m x
+10m x 10m and your data were calibrated to range from 0-10m in each
+dimension, you can be reasonably sure that extreme values such as 45m on
+a given axis are bogus. This step is entirely optional, and should only
+be used when the user is confident that data outside certain ranges are
+artifacts or other bugs. Data outside these ranges are then filtered
+out. Best to plot data beforehand and check!!</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## First gather and show the new column names</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>motive_gathered <span class="ot">&lt;-</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  motive_relabeled <span class="sc">%&gt;%</span></span>
@@ -378,13 +664,38 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="standardization-of-tunnel-position-and-coordinates" class="section level3">
 <h3>Standardization of tunnel position and coordinates</h3>
-<p>The coordinate system of the tunnel itself may require adjustment or standardization. For example, data collected across different days may show slight differences in coordinate systems if calibration equipment was not used in identical ways. Moreover, the user may want to redefine how the coordinate system itself is defined (i.e. change the location of <code>(0, 0, 0)</code> to another place within the tunnel.</p>
-<p>Note that having <code>(0, 0, 0)</code> set to the center of the region of interest (covered in the next section of this vignette) is required for all subsequent <code>pathviewr</code> functions to work.</p>
-<p><code>pathviewr</code> offers three main choices for such standardization:</p>
+<p>The coordinate system of the tunnel itself may require adjustment or
+standardization. For example, data collected across different days may
+show slight differences in coordinate systems if calibration equipment
+was not used in identical ways. Moreover, the user may want to redefine
+how the coordinate system itself is defined (i.e. change the location of
+<code>(0, 0, 0)</code> to another place within the tunnel.</p>
+<p>Note that having <code>(0, 0, 0)</code> set to the center of the
+region of interest (covered in the next section of this vignette) is
+required for all subsequent <code>pathviewr</code> functions to
+work.</p>
+<p><code>pathviewr</code> offers three main choices for such
+standardization:</p>
 <ul>
-<li><p><code>redefine_tunnel_center()</code>: Sets the location of 0 on any or all axes to a new location. See the Help page for this function to see the four different methods by which a user can specify this. No rotation of the tunnel is performed. This function can be used on both Motive and Flydra data.</p></li>
-<li><p><code>standardize_tunnel()</code>: Use specified landmarks (<code>subjects</code> within the <code>viewr</code> object) to rotate and translate the location of a tunnel, setting <code>(0, 0, 0)</code> to the center of the tunnel (centering). For example, in an avian flight tunnel, perches may be set up on opposite ends of the tunnel and rigid body markers may be set to them. The positions of these perches can be used as landmarks to standardize tunnel position. Note that this is typically not possible for Flydra data, since Flydra data will be imported with only one <code>subject</code>.</p></li>
-<li><p><code>rotate_tunnel</code>: Rotate and center a tunnel based on user-defined coordinates (i.e. similar to <code>standardize_tunnel()</code> but for cases where specified landmarks are not in the data). This function can be used on both Motive and Flydra data.</p></li>
+<li><p><code>redefine_tunnel_center()</code>: Sets the location of 0 on
+any or all axes to a new location. See the Help page for this function
+to see the four different methods by which a user can specify this. No
+rotation of the tunnel is performed. This function can be used on both
+Motive and Flydra data.</p></li>
+<li><p><code>standardize_tunnel()</code>: Use specified landmarks
+(<code>subjects</code> within the <code>viewr</code> object) to rotate
+and translate the location of a tunnel, setting <code>(0, 0, 0)</code>
+to the center of the tunnel (centering). For example, in an avian flight
+tunnel, perches may be set up on opposite ends of the tunnel and rigid
+body markers may be set to them. The positions of these perches can be
+used as landmarks to standardize tunnel position. Note that this is
+typically not possible for Flydra data, since Flydra data will be
+imported with only one <code>subject</code>.</p></li>
+<li><p><code>rotate_tunnel</code>: Rotate and center a tunnel based on
+user-defined coordinates (i.e. similar to
+<code>standardize_tunnel()</code> but for cases where specified
+landmarks are not in the data). This function can be used on both Motive
+and Flydra data.</p></li>
 </ul>
 <p>Two quick examples will follow, using our Motive and Flydra data:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Rotate and center the motive data set:</span></span>
@@ -400,7 +711,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">perch2_wid_min =</span> <span class="fl">0.13</span>,</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">perch2_wid_max =</span> <span class="fl">0.35</span></span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p>In the above, virtual perches are defined by the user using the arguments shown. The center of each perch is then found and then the locations of the two perch centers are then used to 1) set <code>(0, 0, 0)</code> to the point that is equidistant from the perches (i.e. the middle of the tunnel) and 2) rotate the tunnel about the height axis so that both perch width coordinates are at 0. This may be easier to understand through plotting:</p>
+<p>In the above, virtual perches are defined by the user using the
+arguments shown. The center of each perch is then found and then the
+locations of the two perch centers are then used to 1) set
+<code>(0, 0, 0)</code> to the point that is equidistant from the perches
+(i.e. the middle of the tunnel) and 2) rotate the tunnel about the
+height axis so that both perch width coordinates are at 0. This may be
+easier to understand through plotting:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Quick (base-R) plot of the original data</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(motive_trimmed<span class="sc">$</span>position_length,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>     motive_trimmed<span class="sc">$</span>position_width,</span>
@@ -412,15 +729,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>     motive_rotated<span class="sc">$</span>position_width,</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">asp =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>Differences due to rotation may be extremely subtle, but the redefining of <code>(0, 0, 0)</code> to the middle of the tunnel should be clear from contrasting the axes of the plots.</p>
-<p>Flydra data typically do not need to be rotated, so we will instead use <code>redefine_tunnel_center()</code> to adjust the location of <code>(0, 0, 0)</code>:</p>
+<p>Differences due to rotation may be extremely subtle, but the
+redefining of <code>(0, 0, 0)</code> to the middle of the tunnel should
+be clear from contrasting the axes of the plots.</p>
+<p>Flydra data typically do not need to be rotated, so we will instead
+use <code>redefine_tunnel_center()</code> to adjust the location of
+<code>(0, 0, 0)</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Re-center the Flydra data set:</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>flydra_centered <span class="ot">&lt;-</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  flydra_data <span class="sc">%&gt;%</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">redefine_tunnel_center</span>(<span class="at">length_method =</span> <span class="st">&quot;middle&quot;</span>,</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">height_method =</span> <span class="st">&quot;user-defined&quot;</span>,</span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">height_zero =</span> <span class="fl">1.44</span>)</span></code></pre></div>
-<p>Here, we are using <code>length_method = &quot;middle&quot;</code> to use the middle of the range of “length” data to set length = 0 (a translation), making no change to the width axis, and then specifying that height = 0 should be equal to the value <code>1.44</code> from the original data (another translation). Again, plotting may help; note that this time, we’ll plot length x height (instead of width):</p>
+<p>Here, we are using <code>length_method = &quot;middle&quot;</code> to use the
+middle of the range of “length” data to set length = 0 (a translation),
+making no change to the width axis, and then specifying that height = 0
+should be equal to the value <code>1.44</code> from the original data
+(another translation). Again, plotting may help; note that this time,
+we’ll plot length x height (instead of width):</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Quick (base-R) plot of the original data</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(flydra_data<span class="sc">$</span>position_length,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>     flydra_data<span class="sc">$</span>position_height,</span>
@@ -435,8 +761,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="selecting-a-region-of-interest" class="section level3">
 <h3>Selecting a region of interest</h3>
-<p>This required step has benefits that are twofold: 1) treatment effects on animal movement may only manifest over certain regions of the tunnel, and 2) focusing on a subset of the data makes it easier to define explicit trajectories and run computations faster.</p>
-<p>The region of interest is defined via the function <code>select_x_percent()</code>. Once tunnel coordinates have been standardized (via one of the function in the previous section), <code>select_x_percent()</code> then selects the middle <code>x</code> percent (along the length axis) of the tunnel as the region of interest. For example, selecting 50 percent would start from the center of the tunnel and move 25% of the tunnel along positive length and 25% along negative length values to then select the middle 50% of the tunnel.</p>
+<p>This required step has benefits that are twofold: 1) treatment
+effects on animal movement may only manifest over certain regions of the
+tunnel, and 2) focusing on a subset of the data makes it easier to
+define explicit trajectories and run computations faster.</p>
+<p>The region of interest is defined via the function
+<code>select_x_percent()</code>. Once tunnel coordinates have been
+standardized (via one of the function in the previous section),
+<code>select_x_percent()</code> then selects the middle <code>x</code>
+percent (along the length axis) of the tunnel as the region of interest.
+For example, selecting 50 percent would start from the center of the
+tunnel and move 25% of the tunnel along positive length and 25% along
+negative length values to then select the middle 50% of the tunnel.</p>
 <p>Quick examples:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Motive data: select the middle 50% of the tunnel as the region of interest</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>motive_selected <span class="ot">&lt;-</span></span>
@@ -460,11 +796,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="isolating-each-trajectory" class="section level3">
 <h3>Isolating each trajectory</h3>
-<p>The <code>pathviewr</code> standard for defining a trajectory is: continuous movement from one side of the tunnel to the other over the span of the region of interest. Note that this definition does not strictly require linear movement from one end to the other; an animal could make several loops inside the region of interest within a given trajectory.</p>
-<p>Isolating trajectories is handled via the <code>separate_trajectories()</code> function in <code>pathviewr</code>. Note that a region of interest must be selected beforehand via <code>select_x_percent()</code>.</p>
-<p>Because cameras may occasionally drop frames, we allow the user to permit some relaxation of how stringent the “continuous movement” criterion is. This is handled via the <code>max_frame_gap</code> argument within <code>separate_trajectories()</code>. For more details, please see <a href="https://docs.ropensci.org/pathviewr/articles/managing-frame-gaps.html">the vignette Managing frame gaps with pathviewr</a>.</p>
-<p>In our Motive example, we’ll use the automated feature built into the function to guesstimate the best <code>max_frame_gap</code> allowed. When frame gaps larger than <code>max_frame_gap</code> are encountered, the function will force the defining of a new trajectory. But if frame gaps smaller than <code>max_frame_gap</code> are encountered, keeping observations within the same trajectory is permitted.</p>
-<p>In the Flydra example, we’ll simply set <code>max_frame_gap</code> to <code>1</code> so that no frame gaps are allowed (movement must be continuous with no dropped frames).</p>
+<p>The <code>pathviewr</code> standard for defining a trajectory is:
+continuous movement from one side of the tunnel to the other over the
+span of the region of interest. Note that this definition does not
+strictly require linear movement from one end to the other; an animal
+could make several loops inside the region of interest within a given
+trajectory.</p>
+<p>Isolating trajectories is handled via the
+<code>separate_trajectories()</code> function in <code>pathviewr</code>.
+Note that a region of interest must be selected beforehand via
+<code>select_x_percent()</code>.</p>
+<p>Because cameras may occasionally drop frames, we allow the user to
+permit some relaxation of how stringent the “continuous movement”
+criterion is. This is handled via the <code>max_frame_gap</code>
+argument within <code>separate_trajectories()</code>. For more details,
+please see <a href="https://docs.ropensci.org/pathviewr/articles/managing-frame-gaps.html">the
+vignette Managing frame gaps with pathviewr</a>.</p>
+<p>In our Motive example, we’ll use the automated feature built into the
+function to guesstimate the best <code>max_frame_gap</code> allowed.
+When frame gaps larger than <code>max_frame_gap</code> are encountered,
+the function will force the defining of a new trajectory. But if frame
+gaps smaller than <code>max_frame_gap</code> are encountered, keeping
+observations within the same trajectory is permitted.</p>
+<p>In the Flydra example, we’ll simply set <code>max_frame_gap</code> to
+<code>1</code> so that no frame gaps are allowed (movement must be
+continuous with no dropped frames).</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>motive_labeled <span class="ot">&lt;-</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  motive_selected <span class="sc">%&gt;%</span> </span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_trajectories</span>(<span class="at">max_frame_gap =</span> <span class="st">&quot;autodetect&quot;</span>)</span>
@@ -476,10 +832,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="retain-only-complete-trajectories" class="section level3">
 <h3>Retain only complete trajectories</h3>
-<p>Now that trajectories have been isolated and labeled, the final cleaning step is to retain only the trajectories that completely span from one end of the region of interest to the other.</p>
-<p>This final step is handled via <code>pathviewr</code>’s <code>get_full_trajectories()</code>.</p>
-<p>There is a built-in “fuzziness” feature: because trajectories may not have observations exactly at the beginning or the end of the region of interest, it may be necessary to allow trajectories to be slightly shorter than the range of the selected region of interest. The <code>span</code> parameter of this function handles this. By supplying a numeric proportion from <code>0</code> to <code>1</code>, a user may allow trajectories to span that proportion of the selected region. For example, setting <code>span = 0.95</code> will keep all trajectories that span 95% of the length of the selected region of interest. Setting <code>span = 1</code> (not recommended) will strictly keep trajectories that start and end at the <strong>exact</strong> cut-offs of the selected region of interest.</p>
-<p>For these reasons, <code>span</code>s of <code>0.99</code> to <code>0.95</code> are generally recommended. The best choice ultimately depends on your capture frame rate as well as your own judgment. Should you desire to set it lower (which you can), you may instead consider using a smaller region of interest (i.e. set the <code>desired_percent</code> parameter in <code>select_x_percent()</code> to be lower).</p>
+<p>Now that trajectories have been isolated and labeled, the final
+cleaning step is to retain only the trajectories that completely span
+from one end of the region of interest to the other.</p>
+<p>This final step is handled via <code>pathviewr</code>’s
+<code>get_full_trajectories()</code>.</p>
+<p>There is a built-in “fuzziness” feature: because trajectories may not
+have observations exactly at the beginning or the end of the region of
+interest, it may be necessary to allow trajectories to be slightly
+shorter than the range of the selected region of interest. The
+<code>span</code> parameter of this function handles this. By supplying
+a numeric proportion from <code>0</code> to <code>1</code>, a user may
+allow trajectories to span that proportion of the selected region. For
+example, setting <code>span = 0.95</code> will keep all trajectories
+that span 95% of the length of the selected region of interest. Setting
+<code>span = 1</code> (not recommended) will strictly keep trajectories
+that start and end at the <strong>exact</strong> cut-offs of the
+selected region of interest.</p>
+<p>For these reasons, <code>span</code>s of <code>0.99</code> to
+<code>0.95</code> are generally recommended. The best choice ultimately
+depends on your capture frame rate as well as your own judgment. Should
+you desire to set it lower (which you can), you may instead consider
+using a smaller region of interest (i.e. set the
+<code>desired_percent</code> parameter in
+<code>select_x_percent()</code> to be lower).</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Motive</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>motive_full <span class="ot">&lt;-</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  motive_labeled <span class="sc">%&gt;%</span> </span>
@@ -502,10 +878,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="all-in-one-cleaning-functions" class="section level3">
 <h3>All-in-one cleaning functions</h3>
-<p>All of the above steps can also be done by using <code>pathviewr</code>’s designated all-in-one functions. <code>import_and_clean_viewr()</code> imports raw data and allows the user to run through all of the cleaning steps previously covered in this vignette. <code>clean_viewr()</code> does the same on any object already imported into the R environment (i.e. it skips data import).</p>
-<p>For both of these functions, all of the cleaning steps are set to <code>TRUE</code> by default, but may be turned off by using <code>FALSE</code>. Argument names correspond to standalone functions in <code>pathviewr</code>, and if the user wants to use non-default values for corresponding arguments, they should also be supplied for any steps that are set to <code>TRUE</code>.</p>
-<p>For example, if the user keeps <code>select_x_percent = TRUE</code> as an argument in <code>clean_viewr()</code>, the <code>select_x_percent()</code> function is run internally. This means that should the user desire to select a region of interest that does not match the default value of 33 percent, an additional argument should be supplied to <code>clean_viewr()</code> as if it were being supplied to <code>select_x_percent()</code> itself, e.g.: <code>desired_percent = 50</code>.</p>
-<p>All additional arguments should be written out fully and explicitly.</p>
+<p>All of the above steps can also be done by using
+<code>pathviewr</code>’s designated all-in-one functions.
+<code>import_and_clean_viewr()</code> imports raw data and allows the
+user to run through all of the cleaning steps previously covered in this
+vignette. <code>clean_viewr()</code> does the same on any object already
+imported into the R environment (i.e. it skips data import).</p>
+<p>For both of these functions, all of the cleaning steps are set to
+<code>TRUE</code> by default, but may be turned off by using
+<code>FALSE</code>. Argument names correspond to standalone functions in
+<code>pathviewr</code>, and if the user wants to use non-default values
+for corresponding arguments, they should also be supplied for any steps
+that are set to <code>TRUE</code>.</p>
+<p>For example, if the user keeps <code>select_x_percent = TRUE</code>
+as an argument in <code>clean_viewr()</code>, the
+<code>select_x_percent()</code> function is run internally. This means
+that should the user desire to select a region of interest that does not
+match the default value of 33 percent, an additional argument should be
+supplied to <code>clean_viewr()</code> as if it were being supplied to
+<code>select_x_percent()</code> itself, e.g.:
+<code>desired_percent = 50</code>.</p>
+<p>All additional arguments should be written out fully and
+explicitly.</p>
 <p>Here’s an example using what we previously covered:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>motive_allinone <span class="ot">&lt;-</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  motive_data <span class="sc">%&gt;%</span></span>

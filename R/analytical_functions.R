@@ -197,6 +197,133 @@ Please check that you have entered the name of the height variable correctly.")
 
 }
 
+############################## get_traj_velocities #############################
+## Similar to get_velocity(), but can be done on a per-trajectory basis on
+## a combined object
+##
+## set_init_vel_zero = should the first value be zero or can it be a duplicate
+## of the second velocity value
+
+#' Recompute trajectory-specific velocities
+#'
+#' @inheritParams get_velocity
+#' @param set_init_vel_zero Should the first value be zero or can it be a
+#'   duplicate of the second velocity value? Defaults to FALSE.
+#'
+#' @details Instantaneous velocity is not truly "instantaneous" but rather is
+#' approximated as the change in distance divided by change in time from one
+#' observation (row) to the previous observation (row). Each component of
+#' velocity is computed (i.e. per axis) along with the overall velocity of
+#' the subject.
+#'
+#' @return If \code{add_to_viewr} is \code{TRUE}, additional columns are
+#'   appended to the input viewr object. If \code{FALSE}, a standalone tibble is
+#'   created. Either way, an "instantaneous" velocity is computed as the
+#'   difference in position divided by the difference in time as each successive
+#'   row is encountered. Additionally, velocities along each of the three
+#'   position axes are computed and provided as additional columns.
+#'
+#' @author Vikram B. Baliga
+#'
+#' @family mathematical functions
+#'
+#' @export
+
+get_traj_velocities <- function(obj_name,
+                                time_col = "time_sec",
+                                length_col = "position_length",
+                                width_col = "position_width",
+                                height_col = "position_height",
+                                set_init_vel_zero = FALSE,
+                                velocity_min = NA,
+                                velocity_max = NA) {
+
+  if (!any(grepl(time_col, colnames(obj_name), ignore.case = FALSE))) {
+    stop(
+      "time_col not found.\nPlease check the name of the time variable.")
+  }
+  if (!any(grepl(length_col, colnames(obj_name), ignore.case = FALSE))) {
+    stop(
+      "length_col not found.\nPlease check the name of the length variable.")
+  }
+  if (!any(grepl(width_col, colnames(obj_name), ignore.case = FALSE))) {
+    stop(
+      "width_col not found.\nPlease check the name of the width variable.")
+  }
+  if (!any(grepl(height_col, colnames(obj_name), ignore.case = FALSE))) {
+    stop(
+      "height_col not found.\nPlease check the name of the height variable.")
+  }
+
+  ## ADD BLOCK HERE TO DROP VELOCITIES IF DETECTED
+
+  ## split
+  traj_tibbles <-
+    obj_name %>%
+    dplyr::group_by(file_sub_traj) %>%
+    dplyr::group_split()
+
+  updated_tibs <- list()
+  ## compute per trajectory set
+  for (i in seq_along(traj_tibbles)) {
+    df <- as.data.frame(traj_tibbles[[i]])
+    time_diffs <- diff(df[, time_col])
+    length_inst <- c(0, diff(df[, length_col])/time_diffs)
+    width_inst <- c(0, diff(df[, width_col])/time_diffs)
+    height_inst <- c(0, diff(df[, height_col])/time_diffs)
+    vel <- sqrt((length_inst^2) + (width_inst^2) + (height_inst^2))
+    if (set_init_vel_zero == FALSE) {
+      ## replace each starting value with the succeeding one as an approximation
+      ## that is likely more valid than zero
+      length_inst[1] <- length_inst[2]
+      width_inst[1] <- width_inst[2]
+      height_inst[1] <- height_inst[2]
+      vel[1] <- vel[2]
+    }
+    res <-
+      tibble::tibble(
+        velocity = vel,
+        length_inst_vel = length_inst,
+        width_inst_vel = width_inst,
+        height_inst_vel = height_inst
+      )
+
+    updated_tibs[[i]] <- dplyr::bind_cols(traj_tibbles[[i]], res)
+  }
+
+  ## stitch back together
+  obj_new <-
+    updated_tibs %>%
+    dplyr::bind_rows()
+
+  ## filter by velocity, if user desires
+  if (is.numeric(velocity_min)) {
+    obj_new <- obj_new %>% dplyr::filter(velocity > velocity_min)
+    attr(obj_new, "velocity_min") <- velocity_min
+  }
+  else {
+    obj_new <- obj_new
+    if (is.character(velocity_min)) {
+      stop(
+        "velocity_min is character but should be numeric.")
+    }
+  }
+  if (is.numeric(velocity_max)) {
+    obj_new <- obj_new %>% dplyr::filter(velocity < velocity_max)
+    attr(obj_new, "velocity_max") <- velocity_max
+  }
+  else {
+    obj_new <- obj_new
+    if (is.character(velocity_max)) {
+      stop(
+        "velocity_max is character but should be numeric.")
+    }
+  }
+
+  ## export
+  return(obj_new)
+
+}
 
 ############################## get_dist_point_line #############################
 
@@ -390,9 +517,9 @@ deg_2_rad <- function(deg) {
 #' @param x3 x-coordinate of third point
 #' @param y3 y-coordinate of third point
 #'
-#' @details Everything supplied to arguments must be singular numeric values.
-#' The second point (x2, y2) is treated as the vertex, and the angle between
-#' the three points in 2D space is computed.
+#' @details Everything supplied to arguments must be numeric values or vectors
+#'   of numeric values. The second point (x2, y2) is treated as the vertex, and
+#'   the angle between the three points in 2D space is computed.
 #'
 #' @return A numeric vector that provides the angular measurement in degrees.
 #'
@@ -412,19 +539,17 @@ get_2d_angle <- function(x1, y1,
                          x2, y2,
                          x3, y3) {
 
-  ## re-assignment, to avoid confusion
-  i1 <- x1
-  i2 <- x2
-  i3 <- x3
-  j1 <- y1
-  j2 <- y2
-  j3 <- y3
-
   ## compute angle
-  a <- c(i1, j1) - c(i2, j2)
-  b <- c(i3, j3) - c(i2, j2)
-  theta <- acos(sum(a * b) / (sqrt(sum(a * a)) * sqrt(sum(b * b)))) * (180 /
-                                                                         pi)
+  a <- data.frame(x1, y1) - data.frame(x2, y2)
+  b <- data.frame(x3, y3) - data.frame(x2, y2)
+
+  theta <- NULL
+  for (i in seq_len(nrow(a))) {
+    theta[i] <-
+      acos(sum(a[i,] * b[i,]) / (sqrt(
+        sum(a[i,] * a[i,])) * sqrt(sum(b[i,] * b[i,])))) * (180 / pi)
+  }
+
   ## export
   return(theta)
 }
@@ -444,9 +569,9 @@ get_2d_angle <- function(x1, y1,
 #' @param y3 y-coordinate of third point
 #' @param z3 z-coordinate of third point
 #'
-#' @details Everything supplied to arguments must be singular numeric values.
-#' The second point (x2, y2, z2) is treated as the vertex, and the angle between
-#' the three points in 3D space is computed.
+#' @details Everything supplied to arguments must be numeric values or vectors
+#'   of numeric values. The second point (x2, y2, z2) is treated as the vertex,
+#'   and the angle between the three points in 3D space is computed.
 #'
 #' @return A numeric vector that provides the angular measurement in degrees.
 #'
@@ -496,7 +621,8 @@ get_3d_angle <- function(x1, y1, z1,
 #' that line and each observation is calculated. The "elbow" of the curve is the
 #' observation that maximizes this distance.
 #'
-#' @param data_frame A two-column data frame (numeric entries only)
+#' @param data_frame A two-column data frame (numeric entries only), ordered
+#'   x-axis first, y-axis second.
 #' @param export_type If "row_num" (the default), the row number of the elbow
 #'   point is returned. If anything else, the entire row of the original data
 #'   frame is returned.
@@ -526,8 +652,7 @@ find_curve_elbow <- function(data_frame,
 
   ## Check that there are exactly two columns provided
   if (!dim(data_frame)[2] == 2) {
-    stop("The input data has more than two columns.
-Please ensure there are only two columns, ordered x-axis first, y-axis second")
+    stop("The input data has more than two columns.")
   }
 
   ## Convert to matrix for speedier handling
@@ -589,14 +714,14 @@ Please ensure there are only two columns, ordered x-axis first, y-axis second")
 #'   \code{width_2_screen_neg}, \code{min_dist_pos}, \code{min_dist_neg},
 #'   \code{min_dist_end}, \code{bound_pos}, and \code{bound_neg}.
 #'
-#' @details For tunnels in which \code{vertex_angle} is >90 degree, \code{bound_pos}
-#' and \code{bound_neg} represent a planes orthogonal to the lateral walls and
-#' are used to modify \code{min_dist_pos} and \code{min_dist_neg} calculations
-#' to prevent erroneous outputs.
-#' \code{calc_min_dist_v()} assumes the subject locomotes facing forward,
-#' therefore \code{min_dist_end} represents the minimum distance between the
-#' subject and the end wall to which it is moving towards
-#' All outputs are in meters.
+#' @details For tunnels in which \code{vertex_angle} is >90 degree,
+#'   \code{bound_pos} and \code{bound_neg} represent a planes orthogonal to the
+#'   lateral walls and are used to modify \code{min_dist_pos} and
+#'   \code{min_dist_neg} calculations to prevent erroneous outputs.
+#'   \code{calc_min_dist_v()} assumes the subject locomotes facing forward,
+#'   therefore \code{min_dist_end} represents the minimum distance between the
+#'   subject and the end wall to which it is moving towards All outputs are in
+#'   meters.
 #'
 #' @author Eric R. Press
 #'
@@ -640,14 +765,14 @@ calc_min_dist_v <- function(obj_name,
                             simplify_output = TRUE){
 
   ## Check that it's a viewr object
-  if (!any(attr(obj_name,"pathviewr_steps") == "viewr")){
-    stop("This doesn't seem to be a viewr object")
-  }
+  # if (!any(attr(obj_name,"pathviewr_steps") == "viewr")){
+  #   stop("This doesn't seem to be a viewr object")
+  # }
 
   ## Check that insert_treatments() has been run
-  if (!any(attr(obj_name,"pathviewr_steps") == "treatments_added")){
-    stop("Please run insert_treatments() prior to use")
-  }
+  # if (!any(attr(obj_name,"pathviewr_steps") == "treatments_added")){
+  #   stop("Please run insert_treatments() prior to use")
+  # }
 
   ## duplicate object for simplify_output = TRUE
   obj_simplify <- obj_name
@@ -802,14 +927,14 @@ calc_min_dist_v <- function(obj_name,
 calc_min_dist_box <- function(obj_name){
 
   ## Check that it's a viewr object
-  if (!any(attr(obj_name,"pathviewr_steps") == "viewr")) {
-    stop("This doesn't seem to be a viewr object")
-  }
+  # if (!any(attr(obj_name,"pathviewr_steps") == "viewr")) {
+  #   stop("This doesn't seem to be a viewr object")
+  # }
 
   ## Check that insert_treatments() has been run
-  if (!any(attr(obj_name,"pathviewr_steps") == "treatments_added")){
-    stop("Please run insert_treatments() prior to use")
-  }
+  # if (!any(attr(obj_name,"pathviewr_steps") == "treatments_added")){
+  #   stop("Please run insert_treatments() prior to use")
+  # }
 
   ## Calculate minimum distance to each wall from positive or negative sides of
   ## tunnel
@@ -918,14 +1043,14 @@ calc_min_dist_box <- function(obj_name){
 get_vis_angle <- function(obj_name){
 
   ## Check that it's a viewr object
-  if (!any(attr(obj_name,"pathviewr_steps") == "viewr")){
-    stop("This doesn't seem to be a viewr object")
-  }
+  # if (!any(attr(obj_name,"pathviewr_steps") == "viewr")){
+  #   stop("This doesn't seem to be a viewr object")
+  # }
 
   ## Check that calc_min_dist() has been run
-  if (!any(attr(obj_name, "pathviewr_steps") == "min_dist_calculated")){
-    stop("Please run calc_min_dist_v() or calc_min_dist_box() prior to use")
-  }
+  # if (!any(attr(obj_name, "pathviewr_steps") == "min_dist_calculated")){
+  #   stop("Please run calc_min_dist_v() or calc_min_dist_box() prior to use")
+  # }
 
   ## Calculate visual angles (radians and degrees) using distance to
   ## positive and negative screens. Add these variables into the dataframe.
@@ -1042,14 +1167,14 @@ get_vis_angle <- function(obj_name){
 get_sf <- function(obj_name){
 
   ## Check that it's a viewr object
-  if (!any(attr(obj_name,"pathviewr_steps") == "viewr")){
-    stop("This doesn't seem to be a viewr object")
-  }
+  # if (!any(attr(obj_name,"pathviewr_steps") == "viewr")){
+  #   stop("This doesn't seem to be a viewr object")
+  # }
 
   ## Check that get_vis_angle() has been run
-  if (!any(attr(obj_name,"pathviewr_steps") == "vis_angles_calculated")){
-    stop("Please run get_vis_angle() prior to use")
-  }
+  # if (!any(attr(obj_name,"pathviewr_steps") == "vis_angles_calculated")){
+  #   stop("Please run get_vis_angle() prior to use")
+  # }
 
   ## spatial frequency (cycles/rad) is the inverse of visual angle (rad/cycle)
   obj_name$sf_pos <- 1/obj_name$vis_angle_pos_deg
