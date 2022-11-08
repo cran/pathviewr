@@ -1,6 +1,6 @@
 Package: pathviewr
 Title: Wrangle, Analyze, and Visualize Animal Movement Data
-Version: 1.1.3
+Version: 1.1.5
 Authors@R: 
     c(person(given = "Vikram B.",
              family = "Baliga", 
@@ -38,7 +38,7 @@ Encoding: UTF-8
 RoxygenNote: 7.2.1
 Imports: R.matlab, data.table (>= 1.12.2), magrittr (>= 1.5), dplyr (>=
         1.0.0), stringr (>= 1.4.0), tibble (>= 3.0.1), tidyr (>=
-        1.1.0), fANCOVA, purrr (>= 0.3.3), ggplot2 (>= 3.3.0),
+        1.1.0), fANCOVA, purrr (>= 0.3.3), ggplot2 (>= 3.4.0),
         tidyselect (>= 1.1.0), cowplot, anomalize, lubridate
 Suggests: knitr, rmarkdown, testthat, covr
 VignetteBuilder: knitr
@@ -46,11 +46,11 @@ URL: https://github.com/ropensci/pathviewr/,
         https://docs.ropensci.org/pathviewr/
 BugReports: https://github.com/ropensci/pathviewr/issues/
 NeedsCompilation: no
-Packaged: 2022-08-21 02:07:06 UTC; vbali
+Packaged: 2022-11-08 21:55:07 UTC; vbali
 Author: Vikram B. Baliga [aut, cre] (<https://orcid.org/0000-0002-9367-8974>),
   Melissa S. Armstrong [aut] (<https://orcid.org/0000-0002-3059-0094>),
   Eric R. Press [aut] (<https://orcid.org/0000-0002-1944-3755>),
   Anne-Sophie Bonnet-Lebrun [rev],
   Marco Sciaini [rev]
 Repository: CRAN
-Date/Publication: 2022-08-22 07:50:14 UTC
+Date/Publication: 2022-11-08 22:30:02 UTC
