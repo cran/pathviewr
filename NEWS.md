@@ -1,3 +1,11 @@
+# pathviewr 1.1.7
+* Remove dependency on `anomalize` package by electing to not export 
+`remove_vel_anomalies()` as the package is loaded.
+
+# pathviewr 1.1.6
+* Bug fixes to `remove_duplicate_frames()` to ensure data are not accidentally
+deleted
+
 # pathviewr 1.1.5
 * Bug fixes to `plot_by_subject()` and other plotting functions to ensure 
 compliance with ggplot2 v.3.4.0
