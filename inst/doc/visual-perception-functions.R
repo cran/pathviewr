@@ -1,10 +1,10 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ---- echo=FALSE, out.width="100%", fig.cap="Visual angles can be calculated using the size of a visual pattern (`stim_param`) and the distance to the pattern. Larger patterns at shorter distances produce larger visual angles. For dot stimuli, visual angles can be calculated independent of stimulus orientation."----
+## ----echo=FALSE, out.width="100%", fig.cap="Visual angles can be calculated using the size of a visual pattern (`stim_param`) and the distance to the pattern. Larger patterns at shorter distances produce larger visual angles. For dot stimuli, visual angles can be calculated independent of stimulus orientation."----
 knitr::include_graphics("https://raw.githubusercontent.com/ropensci/pathviewr/dc728871873b92dc8412bdcb5ef58031457f6788/images/stim_param_angle.jpeg")
 
 ## ----package_loading, message=FALSE, warning=FALSE----------------------------
